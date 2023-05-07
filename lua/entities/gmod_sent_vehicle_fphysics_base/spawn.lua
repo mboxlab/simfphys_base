@@ -27,12 +27,12 @@ function ENT:Initialize()
 
 	local PObj = self:GetPhysicsObject()
 
-	if not IsValid( PObj ) then print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE! '"..self:GetModel().."' has no physics model!") return end
-	
+	if not IsValid( PObj ) then print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE! '"..self:GetModel().."' has no physics model!") self:Remove() return end
+
 	PObj:EnableMotion( false )
-	
+
 	self:SetValues()
-	
+
 	timer.Simple( 0.1, function()
 		if not IsValid( self ) then return end
 		self:InitializeVehicle()
