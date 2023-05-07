@@ -11,11 +11,7 @@ ENT.AdminSpawnable  = false
 ENT.AutomaticFrameAdvance = true
 ENT.RenderGroup = RENDERGROUP_BOTH 
 
-if CLIENT then
-	ENT.Editable = true -- always show it on client
- else
-	ENT.Editable = (GetConVar("sv_simfphys_devmode"):GetInt() or 1) >= 1
-end
+ENT.Editable = true
 
 ENT.IsSimfphyscar = true
 

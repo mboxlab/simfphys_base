@@ -1,4 +1,4 @@
-CreateConVar( "sv_simfphys_devmode", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"1 = enabled, 0 = disabled   (requires a restart)" )
+CreateConVar( "sv_simfphys_devmode", "1", {FCVAR_NONE},"does nothing, this just here for backwards compatibility. Restrict the tools instead." )
 CreateConVar( "sv_simfphys_enabledamage", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"1 = enabled, 0 = disabled" )
 CreateConVar( "sv_simfphys_gib_lifetime", "30", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"How many seconds before removing the gibs (0 = never remove)" )
 CreateConVar( "sv_simfphys_playerdamage", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"should players take damage from collisions in vehicles?" )
@@ -7,13 +7,14 @@ CreateConVar( "sv_simfphys_fuel", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"enabl
 CreateConVar( "sv_simfphys_fuelscale", "0.1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"fuel tank size multiplier. 1 = Realistic fuel tank size (about 2-3 hours of fullthrottle driving, Lol, have fun)" )
 CreateConVar( "sv_simfphys_teampassenger", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"allow players of different teams to enter the same vehicle?, 0 = allow everyone, 1 = team only" )
 
-simfphys = istable( simfphys ) and simfphys or {}
 simfphys.DamageEnabled = false
 simfphys.DamageMul = 1
 simfphys.pDamageEnabled = false
 simfphys.Fuel = true
 simfphys.FuelMul = 0.1
-simfphys.VERSION = 1.2
+
+simfphys.VERSION = 455
+simfphys.VERSION_GITHUB = 0
 
 simfphys.pSwitchKeys = {[KEY_1] = 1,[KEY_2] = 2,[KEY_3] = 3,[KEY_4] = 4,[KEY_5] = 5,[KEY_6] = 6,[KEY_7] = 7,[KEY_8] = 8,[KEY_9] = 9,[KEY_0] = 10}
 simfphys.pSwitchKeysInv = {[1] = KEY_1,[2] = KEY_2,[3] = KEY_3,[4] = KEY_4,[5] = KEY_5,[6] = KEY_6,[7] = KEY_7,[8] = KEY_8,[9] = KEY_9,[10] = KEY_0}
@@ -384,9 +385,23 @@ if SERVER then
 			end
 		end
 	end
+
+	hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
+		if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
+
+		if not ply:IsAdmin() and property == "editentity" then
+			if (GetConVar("sv_simfphys_devmode"):GetInt() or 1) < 1 then return false end
+		end
+	end )
 end
 
 if CLIENT then
+	hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
+		if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
+
+		if not ply:IsAdmin() and property == "editentity" then return false end
+	end )
+
 	net.Receive( "simfphys_plyrequestinfo", function( length )
 		local ent = net.ReadEntity()
 		
