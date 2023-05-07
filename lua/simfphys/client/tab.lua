@@ -626,11 +626,16 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 	-- Add a tree node for each category
 	--
 	for CategoryName, v in SortedPairs( Categorised ) do
+		local node
 
-		-- Add a node to the tree
-		local node = tree:AddNode( CategoryName, "icon16/bricks.png" )
-		
-			-- When we click on the node - populate it using this function
+		if CategoryName == "Base" then
+			node = tree
+		else
+			-- Add a node to the tree
+			node = tree:AddNode( CategoryName, "icon16/bricks.png" )
+		end
+
+		-- When we click on the node - populate it using this function
 		node.DoPopulate = function( self )
 			
 			-- If we've already populated it - forget it.
