@@ -138,11 +138,11 @@ local function ValidateModel( model )
 	end
 	
 	local list = list.Get( "simfphys_Wheels" )[model]
-	
+
 	if list then 
 		return true
 	end
-	
+
 	return false
 end
 
@@ -233,12 +233,13 @@ function TOOL:LeftClick( trace )
 			
 			local front_offset = self:GetClientInfo("offsetfront")
 			local rear_offset = self:GetClientInfo("offsetrear")
-			
+
 			if not front_model or not rear_model or not front_angle or not rear_angle then print("wtf bro how did you do this") return false end
-			
+
 			if not ValidateModel( front_model ) or not ValidateModel( rear_model ) then 
 				local ply = self:GetOwner()
 				ply:PrintMessage( HUD_PRINTTALK, "selected wheel does not exist on the server")
+
 				return false
 			end
 			
@@ -461,8 +462,8 @@ list.Set( "simfphys_Wheels", "models/mechanics/wheels/wheel_spike_24.mdl", {Angl
 list.Set( "simfphys_Wheels", "models/mechanics/wheels/wheel_spike_48.mdl", {Angle = Angle(90,0,0)} )
 list.Set( "simfphys_Wheels", "models/xeon133/racewheel/race-wheel-30.mdl", {Angle = Angle(0,-90,0)} )
 list.Set( "simfphys_Wheels", "models/xeon133/racewheelskinny/race-wheel-30_s.mdl", {Angle = Angle(0,-90,0)} )
-list.Set( "simfphys_Wheels", "models/NatesWheel/nateswheel.mdl", {Angle = Angle(0,180,0)} )
-list.Set( "simfphys_Wheels", "models/XQM/airplanewheel1medium.mdl", {Angle = Angle(0,180,0)} )
+list.Set( "simfphys_Wheels", "models/nateswheel/nateswheel.mdl", {Angle = Angle(0,180,0)} )
+list.Set( "simfphys_Wheels", "models/xqm/airplanewheel1medium.mdl", {Angle = Angle(0,180,0)} )
 list.Set( "simfphys_Wheels", "models/xeon133/offroad/off-road-30.mdl", {Angle = Angle(0,180,0)} )
 
 local LW_Wheels = {
