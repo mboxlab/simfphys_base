@@ -1,3 +1,14 @@
+local function IsServerOK()
+
+	if GetConVar( "gmod_physiterations" ):GetInt() < 4 then
+		RunConsoleCommand("gmod_physiterations", "4")
+
+		return false
+	end
+
+	return true
+end
+
 function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
@@ -7,7 +18,15 @@ function ENT:Initialize()
 	self:SetRenderMode( RENDERMODE_TRANSALPHA )
 	self:AddFlags( FL_OBJECT ) -- this allows npcs to see this entity
 
+	if not IsServerOK() then
+
+		self:Remove()
+
+		print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE!")
+	end
+
 	local PObj = self:GetPhysicsObject()
+
 	if not IsValid( PObj ) then print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE! '"..self:GetModel().."' has no physics model!") return end
 	
 	PObj:EnableMotion( false )
