@@ -245,40 +245,6 @@ function ENT:OnTakeDamage( dmginfo )
 		
 		self:ApplyDamage( Damage, Type )
 	end
-	
-	if self.IsArmored then return end
-	
-	if IsValid(Driver) then
-		local Distance = (DamagePos - Driver:GetPos()):Length() 
-		if (Distance < 70) then
-			local Damage = (70 - Distance) / 22
-			dmginfo:ScaleDamage( Damage )
-			Driver:TakeDamageInfo( dmginfo )
-			
-			local effectdata = EffectData()
-				effectdata:SetOrigin( DamagePos )
-			util.Effect( "BloodImpact", effectdata, true, true )
-		end
-	end
-	
-	if self.PassengerSeats then
-		for i = 1, table.Count( self.PassengerSeats ) do
-			local Passenger = self.pSeat[i]:GetDriver()
-			
-			if IsValid(Passenger) then
-				local Distance = (DamagePos - Passenger:GetPos()):Length()
-				local Damage = (70 - Distance) / 22
-				if (Distance < 70) then
-					dmginfo:ScaleDamage( Damage )
-					Passenger:TakeDamageInfo( dmginfo )
-					
-					local effectdata = EffectData()
-						effectdata:SetOrigin( DamagePos )
-					util.Effect( "BloodImpact", effectdata, true, true )
-				end
-			end
-		end
-	end
 end
 
 local function Spark( pos , normal , snd )
