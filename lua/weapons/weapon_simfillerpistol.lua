@@ -316,6 +316,7 @@ function SWEP:PrimaryAttack()
 						ent:SetFuel( Fuel + self.RefilAmount )
 					
 						timer.Simple(0.2, function()
+                            if not IsValid( self ) or not IsValid( Owner ) then return end
 							if self:GetFuelType() == FUELTYPE_ELECTRIC then
 								sound.Play( Sound( "items/battery_pickup.wav" ), Trace.HitPos, 50)
 								
