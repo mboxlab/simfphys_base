@@ -166,7 +166,7 @@ function ENT:GetPassengerSeats()
 end
 
 function ENT:GetVehicleClass()
-	return "these are not the droids you are looking for"
+	return self:GetSpawn_List()
 end
 
 function ENT:GetSeatAnimation( ply )
