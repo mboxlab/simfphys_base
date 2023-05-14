@@ -739,6 +739,9 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 		self:DoPopulate()
 		pnlContent:SwitchPanel( self.PropPanel )
 	end
+
+	-- call original hook
+	hook.Run( "SimfphysPopulateVehicles", pnlContent, tree, node )
 end )
 
 spawnmenu.AddContentType( "simfphys_vehicles", function( container, obj )
