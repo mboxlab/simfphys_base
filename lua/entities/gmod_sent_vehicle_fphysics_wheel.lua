@@ -553,7 +553,7 @@ if CLIENT then
 		local BaseEnt = self:GetBaseEnt()
 		if not IsValid( BaseEnt ) then return end
 
-		if LocalPlayer():GetPos():Distance(self:GetPos()) > 6000 or not BaseEnt:GetActive() then return end
+		if LocalPlayer():GetPos():DistToSqr(self:GetPos()) > 6000 * 6000 or not BaseEnt:GetActive() then return end
 		local WheelOnGround = self:GetOnGround()
 		local GripLoss = self:GetGripLoss()
 		local Material = self:GetSurfaceMaterial()
