@@ -94,6 +94,34 @@ function ENT:ExplodeVehicle()
 	Col.g = Col.g * 0.8
 	Col.b = Col.b * 0.8
 	
+	local Driver = self:GetDriver()
+	if IsValid( Driver ) then
+		if self.RemoteDriver ~= Driver then
+			local dmginfo = DamageInfo()
+			dmginfo:SetDamage( Driver:Health() + Driver:Armor() )
+			dmginfo:SetAttacker( self.LastAttacker or game.GetWorld() )
+			dmginfo:SetInflictor( self.LastInflictor or game.GetWorld() )
+			dmginfo:SetDamageType( DMG_DIRECT )
+
+			Driver:TakeDamageInfo( dmginfo )
+		end
+	end
+	
+	if self.PassengerSeats then
+		for i = 1, table.Count( self.PassengerSeats ) do
+			local Passenger = self.pSeat[i]:GetDriver()
+			if IsValid( Passenger ) then
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage( Passenger:Health() + Passenger:Armor() )
+				dmginfo:SetAttacker( self.LastAttacker or game.GetWorld() )
+				dmginfo:SetInflictor( self.LastInflictor or game.GetWorld() )
+				dmginfo:SetDamageType( DMG_DIRECT )
+
+				Passenger:TakeDamageInfo( dmginfo )
+			end
+		end
+	end
+
 	if self.GibModels then
 		local bprop = ents.Create( "gmod_sent_vehicle_fphysics_gib" )
 		bprop:SetModel( self.GibModels[1] )
@@ -194,22 +222,6 @@ function ENT:ExplodeVehicle()
 					
 					simfphys.SetOwner( ply , prop )
 				end
-			end
-		end
-	end
-
-	local Driver = self:GetDriver()
-	if IsValid( Driver ) then
-		if self.RemoteDriver ~= Driver then
-			Driver:TakeDamage( Driver:Health() + Driver:Armor(), self.LastAttacker or Entity(0), self.LastInflictor or Entity(0) )
-		end
-	end
-	
-	if self.PassengerSeats then
-		for i = 1, table.Count( self.PassengerSeats ) do
-			local Passenger = self.pSeat[i]:GetDriver()
-			if IsValid( Passenger ) then
-				Passenger:TakeDamage( Passenger:Health() + Passenger:Armor(), self.LastAttacker or Entity(0), self.LastInflictor or Entity(0) )
 			end
 		end
 	end
