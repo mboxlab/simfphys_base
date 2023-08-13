@@ -98,9 +98,6 @@ ms_deadzone = GetConVar( "cl_simfphys_ms_deadzone" ):GetFloat()
 ms_exponent = GetConVar( "cl_simfphys_ms_exponent" ):GetFloat()
 ms_key_freelook = GetConVar( "cl_simfphys_ms_keyfreelook" ):GetInt()
 
-local ms_pos_x = 0
-local sm_throttle = 0
-
 local function DrawCircle( X, Y, radius )
 	local segmentdist = 360 / ( 2 * math.pi * radius / 2 )
 	
@@ -108,6 +105,11 @@ local function DrawCircle( X, Y, radius )
 		surface.DrawLine( X + math.cos( math.rad( a ) ) * radius, Y - math.sin( math.rad( a ) ) * radius, X + math.cos( math.rad( a + segmentdist ) ) * radius, Y - math.sin( math.rad( a + segmentdist ) ) * radius )
 	end
 end
+
+local ms_pos_x = 0
+local sm_throttle = 0
+local s_smoothrpm = 0
+local lastMouseSteer = 0
 
 hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 	if ply ~= LocalPlayer() then return end
@@ -132,11 +134,14 @@ hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 
 	end
 
+	if lastMouseSteer == SteerVehicle then return end
+	lastMouseSteer = SteerVehicle
+
 	net.Start( "simfphys_mousesteer" )
 		net.WriteEntity( vehicle )
-		net.WriteFloat( SteerVehicle )
+		net.WriteInt( SteerVehicle * 255, 9 )
 	net.SendToServer()
-end)
+end )
 
 local function drawsimfphysHUD(vehicle,SeatCount)
 	if isMouseSteer and ShowHud_ms then

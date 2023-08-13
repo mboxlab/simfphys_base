@@ -1,16 +1,18 @@
 util.AddNetworkString( "simfphys_mousesteer" )
 util.AddNetworkString( "simfphys_blockcontrols" )
 	
-net.Receive( "simfphys_mousesteer", function( length, ply )
+net.Receive( "simfphys_mousesteer", function( _, ply )
 	if not ply:IsDrivingSimfphys() then return end
 
 	local vehicle = net.ReadEntity()
-	local Steer = net.ReadFloat()
-	
+	local Steer = net.ReadInt( 9 )
+
+	Steer = Steer / 255
+
 	if not IsValid( vehicle ) or ply:GetSimfphys() ~= vehicle:GetParent() then return end
-	
+
 	vehicle.ms_Steer = Steer
-end)
+end )
 
 net.Receive( "simfphys_blockcontrols", function( length, ply )
 	if not IsValid( ply ) then return end
