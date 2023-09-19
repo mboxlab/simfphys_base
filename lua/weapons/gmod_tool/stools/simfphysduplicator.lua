@@ -589,7 +589,7 @@ function TOOL:LeftClick( trace )
 		Ent.Turbocharged = tobool( ply.TOOLMemory.HasTurbo )
 		Ent.Supercharged = tobool( ply.TOOLMemory.HasBlower )
 		
-		Ent:SetEngineSoundPreset( math.Clamp( tonumber( ply.TOOLMemory.SoundPreset ), -1, 14) )
+		Ent:SetEngineSoundPreset( math.Clamp( tonumber( ply.TOOLMemory.SoundPreset ), -1, 23) )
 		Ent:SetMaxTorque( math.Clamp( tonumber( ply.TOOLMemory.PeakTorque ), 20, 1000) )
 		Ent:SetDifferentialGear( math.Clamp( tonumber( ply.TOOLMemory.FinalGear ),0.2, 6 ) )
 		

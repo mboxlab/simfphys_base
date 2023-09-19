@@ -23,7 +23,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Float",4, "FrontSuspensionHeight",		{ KeyName = "frontsuspensionheight",	Edit = { type = "Float",		order = 4,min = -1, max = 1,		category = "Suspension" } } )
 	self:NetworkVar( "Float",5, "RearSuspensionHeight",		{ KeyName = "rearsuspensionheight",		Edit = { type = "Float",		order = 5,min = -1, max = 1,		category = "Suspension" } } )
 	
-	self:NetworkVar( "Int",0, "EngineSoundPreset",			{ KeyName = "enginesoundpreset",		Edit = { type = "Int",			order = 6,min = -1, max = 14,		category = "Engine"} } )
+	self:NetworkVar( "Int",0, "EngineSoundPreset",			{ KeyName = "enginesoundpreset",		Edit = { type = "Int",			order = 6,min = -1, max = 23,		category = "Engine"} } )
 	self:NetworkVar( "Int",1, "IdleRPM", 					{ KeyName = "idlerpm",				Edit = { type = "Int",			order = 7,min = 1, max = 25000,	category = "Engine"} } )
 	self:NetworkVar( "Int",2, "LimitRPM", 					{ KeyName = "limitrpm",				Edit = { type = "Int",			order = 8,min = 4, max = 25000,	category = "Engine"} } )
 	self:NetworkVar( "Int",3, "PowerBandStart", 			{ KeyName = "powerbandstart",			Edit = { type = "Int",			order = 9,min = 2, max = 25000,	category = "Engine"} } )
@@ -89,6 +89,7 @@ function ENT:IsSimfphyscar()
 	return true
 end
 
+-- NOTE @Luna, DO NOT REMOVE THIS. DARKRP USES THIS FOR THE KEY SWEP
 local VehicleMeta = FindMetaTable("Entity")
 local OldIsVehicle = VehicleMeta.IsVehicle
 function VehicleMeta:IsVehicle()
