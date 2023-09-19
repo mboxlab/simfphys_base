@@ -176,10 +176,7 @@ function ENT:InitializeVehicle()
 	else
 		self.DriverSeat:SetParent( self )
 	end
-	
-	self.DriverSeat:GetPhysicsObject():EnableDrag( false ) 
-	self.DriverSeat:GetPhysicsObject():EnableMotion( false )
-	self.DriverSeat:GetPhysicsObject():SetMass( 1 )
+
 	self.DriverSeat.fphysSeat = true
 	self.DriverSeat.base = self
 	self.DriverSeat.DoNotDuplicate = true
@@ -190,11 +187,14 @@ function ENT:InitializeVehicle()
 	self.DriverSeat:SetColor( Color( 255, 255, 255, 0 ) ) 
 	self.DriverSeat:SetRenderMode( RENDERMODE_TRANSALPHA )
 	self.DriverSeat:DrawShadow( false )
+	self.DriverSeat:PhysicsDestroy() -- fixes crazy physics
+
 	simfphys.SetOwner( self.EntityOwner, self.DriverSeat )
 	
 	if self.PassengerSeats then
 		for i = 1, table.Count( self.PassengerSeats ) do
 			self.pSeat[i] = ents.Create( "prop_vehicle_prisoner_pod" )
+			self.pSeat[i]:SetMoveType( MOVETYPE_NONE )
 			self.pSeat[i]:SetModel( "models/nova/airboat_seat.mdl" )
 			self.pSeat[i]:SetKeyValue( "vehiclescript","scripts/vehicles/prisoner_pod.txt" )
 			self.pSeat[i]:SetKeyValue( "limitview", 0)
@@ -214,10 +214,9 @@ function ENT:InitializeVehicle()
 			simfphys.SetOwner( self.EntityOwner, self.pSeat[i] )
 			
 			self.pSeat[i]:DrawShadow( false )
-			self.pSeat[i]:GetPhysicsObject():EnableMotion( false )
-			self.pSeat[i]:GetPhysicsObject():EnableDrag(false) 
-			self.pSeat[i]:GetPhysicsObject():SetMass(1)
-			
+
+			self.pSeat[i]:PhysicsDestroy() -- fixes crazy physics
+	
 			self:DeleteOnRemove( self.pSeat[i] )
 			
 			self.pSeat[i]:SetParent( self )
@@ -227,14 +226,14 @@ function ENT:InitializeVehicle()
 			self.pSeat[i]:SetNWInt( "pPodIndex", self.pPodKeyIndex )
 		end
 	end
-	
+
 	if istable(WireLib) then
 		local passengersSeats = istable( self.pSeat ) and self.pSeat or {}
 		WireLib.TriggerOutput(self, "PassengerSeats", passengersSeats )
 		
 		WireLib.TriggerOutput(self, "DriverSeat", self.DriverSeat )
 	end
-	
+
 	if self.Attachments then
 		for i = 1, table.Count( self.Attachments ) do
 			local prop = ents.Create( ((self.Attachments[i].IsGlass == true) and "gmod_sent_vehicle_fphysics_attachment_translucent" or "gmod_sent_vehicle_fphysics_attachment") )
@@ -272,7 +271,7 @@ function ENT:InitializeVehicle()
 			self:DeleteOnRemove( prop )
 		end
 	end
-	
+
 	self:GetVehicleData()
 end
 
@@ -282,7 +281,7 @@ function ENT:GetVehicleData()
 	self:SetPoseParameter("vehicle_wheel_fr_height",1) 
 	self:SetPoseParameter("vehicle_wheel_rl_height",1) 
 	self:SetPoseParameter("vehicle_wheel_rr_height",1)
-	
+
 	timer.Simple( 0.15, function()
 		if not IsValid(self) then return end
 		self.posepositions["Pose0_Steerangle"] = self.CustomWheels and Angle(0,0,0) or self:GetAttachment( self:LookupAttachment( "wheel_fl" ) ).Ang
