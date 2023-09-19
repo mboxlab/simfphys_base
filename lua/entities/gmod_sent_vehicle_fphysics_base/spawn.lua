@@ -177,6 +177,10 @@ function ENT:InitializeVehicle()
 		self.DriverSeat:SetParent( self )
 	end
 
+	self.DriverSeat:GetPhysicsObject():EnableDrag( false ) 
+	self.DriverSeat:GetPhysicsObject():EnableMotion( false )
+	self.DriverSeat:GetPhysicsObject():SetMass( 1 )
+
 	self.DriverSeat.fphysSeat = true
 	self.DriverSeat.base = self
 	self.DriverSeat.DoNotDuplicate = true
@@ -187,14 +191,12 @@ function ENT:InitializeVehicle()
 	self.DriverSeat:SetColor( Color( 255, 255, 255, 0 ) ) 
 	self.DriverSeat:SetRenderMode( RENDERMODE_TRANSALPHA )
 	self.DriverSeat:DrawShadow( false )
-	self.DriverSeat:PhysicsDestroy() -- fixes crazy physics
 
 	simfphys.SetOwner( self.EntityOwner, self.DriverSeat )
 	
 	if self.PassengerSeats then
 		for i = 1, table.Count( self.PassengerSeats ) do
 			self.pSeat[i] = ents.Create( "prop_vehicle_prisoner_pod" )
-			self.pSeat[i]:SetMoveType( MOVETYPE_NONE )
 			self.pSeat[i]:SetModel( "models/nova/airboat_seat.mdl" )
 			self.pSeat[i]:SetKeyValue( "vehiclescript","scripts/vehicles/prisoner_pod.txt" )
 			self.pSeat[i]:SetKeyValue( "limitview", 0)
@@ -215,7 +217,9 @@ function ENT:InitializeVehicle()
 			
 			self.pSeat[i]:DrawShadow( false )
 
-			self.pSeat[i]:PhysicsDestroy() -- fixes crazy physics
+			self.pSeat[i]:GetPhysicsObject():EnableMotion( false )
+			self.pSeat[i]:GetPhysicsObject():EnableDrag(false) 
+			self.pSeat[i]:GetPhysicsObject():SetMass(1)
 	
 			self:DeleteOnRemove( self.pSeat[i] )
 			
