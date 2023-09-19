@@ -15,7 +15,7 @@ function ENT:Initialize()
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetNotSolid( true )
 	self:SetUseType( SIMPLE_USE )
-	self:SetRenderMode( RENDERMODE_TRANSALPHA )
+	--self:SetRenderMode( RENDERMODE_TRANSALPHA ) -- fix broken decals
 	self:AddFlags( FL_OBJECT ) -- this allows npcs to see this entity
 
 	if not IsServerOK() then
