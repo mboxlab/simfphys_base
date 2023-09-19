@@ -29,6 +29,7 @@ if SERVER then
 		self:SetCollisionGroup( COLLISION_GROUP_WEAPON  ) 
 		self:SetUseType( SIMPLE_USE )
 		self:AddFlags( FL_OBJECT )
+		self:AddEFlags( EFL_NO_PHYSCANNON_INTERACTION )
 
 		self:DrawShadow( false )
 
