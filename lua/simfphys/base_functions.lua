@@ -94,6 +94,12 @@ hook.Add( "InitPostEntity", "!!!simfphyscheckupdates", function()
 	end)
 end )
 
+hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
+	if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
+
+	if not ply:IsAdmin() and property == "editentity" then return false end
+end )
+
 function simfphys.IsCar( ent )
 	if not IsValid( ent ) then return false end
 	
@@ -421,23 +427,9 @@ if SERVER then
 			end
 		end
 	end
-
-	hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
-		if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
-
-		if not ply:IsAdmin() and property == "editentity" then
-			if (GetConVar("sv_simfphys_devmode"):GetInt() or 1) < 1 then return false end
-		end
-	end )
 end
 
 if CLIENT then
-	hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
-		if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
-
-		if not ply:IsAdmin() and property == "editentity" then return false end
-	end )
-
 	net.Receive( "simfphys_plyrequestinfo", function( length )
 		local ent = net.ReadEntity()
 		
