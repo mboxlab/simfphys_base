@@ -69,12 +69,11 @@ cvars.AddChangeCallback( "cl_simfphys_mousesteer", function( convar, oldValue, n
 	isMouseSteer = new ~= 0
 	if new ~= 0 then return end
 
-	local veh = LocalPlayer():GetVehicle()
-	if not IsValid( veh ) then return end
+	if not LocalPlayer():IsDrivingSimfphys() then return end
 
 	net.Start( "simfphys_mousesteer" )
 	net.WriteEntity( veh )
-	net.WriteFloat( 0 )
+	net.WriteInt( 0, 9 )
 	net.SendToServer()
 end )
 
