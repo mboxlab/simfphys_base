@@ -1,61 +1,5 @@
-local function IsServerOK()
 
-	if GetConVar( "gmod_physiterations" ):GetInt() < 4 then
-		RunConsoleCommand("gmod_physiterations", "4")
-
-		return false
-	end
-
-	return true
-end
-
-function ENT:Initialize()
-	self:PhysicsInit( SOLID_VPHYSICS )
-	self:SetMoveType( MOVETYPE_VPHYSICS )
-	self:SetSolid( SOLID_VPHYSICS )
-	self:SetNotSolid( true )
-	self:SetUseType( SIMPLE_USE )
-	--self:SetRenderMode( RENDERMODE_TRANSALPHA ) -- fix broken decals
-	self:AddFlags( FL_OBJECT ) -- this allows npcs to see this entity
-
-	if not IsServerOK() then
-
-		self:Remove()
-
-		print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE!")
-	end
-
-	local PObj = self:GetPhysicsObject()
-
-	if not IsValid( PObj ) then print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE! '"..self:GetModel().."' has no physics model!") self:Remove() return end
-
-	PObj:EnableMotion( false )
-
-	self:SetValues()
-
-	timer.Simple( 0.1, function()
-		if not IsValid( self ) then return end
-		self:InitializeVehicle()
-	end)
-end
-
-function ENT:PostEntityPaste( ply , ent , createdEntities )
-	self:SetValues()
-	
-	self:SetActive( false )
-	self:SetDriver( NULL )
-	self:SetLightsEnabled( false )
-	self:SetLampsEnabled( false )
-	self:SetFogLightsEnabled( false )
-	
-	self:SetDriverSeat( NULL )
-	self:SetFlyWheelRPM( 0 )
-	self:SetThrottle( 0 )
-end
-
-function ENT:UpdateTransmitState() 
-	return TRANSMIT_ALWAYS
-end
+DEFINE_BASECLASS( "lvs_base" )
 
 function ENT:SetupView()
 	local AttachmentID = self:LookupAttachment( "vehicle_driver_eyes" )
@@ -156,20 +100,9 @@ function ENT:InitializeVehicle()
 	
 	local View = self:SetupView()
 	
-	self.DriverSeat = ents.Create( "prop_vehicle_prisoner_pod" )
-	self.DriverSeat:SetMoveType( MOVETYPE_NONE )
-	
-	self.DriverSeat:SetModel( "models/nova/airboat_seat.mdl" )
-	self.DriverSeat:SetKeyValue( "vehiclescript","scripts/vehicles/prisoner_pod.txt" )
-	self.DriverSeat:SetKeyValue( "limitview", self.LimitView and 1 or 0 )
-	self.DriverSeat:SetPos( View.ViewPos )
-	self.DriverSeat:SetAngles( View.ViewAng )
-	self.DriverSeat:SetOwner( self )
-	self.DriverSeat:Spawn()
-	self.DriverSeat:Activate()
+	self.DriverSeat = self:AddDriverSeat( self:WorldToLocal( View.ViewPos ), self:WorldToLocalAngles( View.ViewAng ) )
 	self.DriverSeat:SetPos( View.ViewPos + self.DriverSeat:GetUp() * (-34 + self.SeatOffset.z) + self.DriverSeat:GetRight() * (self.SeatOffset.y) + self.DriverSeat:GetForward() * (-6 + self.SeatOffset.x) )
-	self.DriverSeat:SetNWInt( "pPodIndex", 1 )
-	
+
 	if View.ID ~= false then
 		self:SetupEnteringAnims()
 		self.DriverSeat:SetParent( self , View.ID )
@@ -177,67 +110,22 @@ function ENT:InitializeVehicle()
 		self.DriverSeat:SetParent( self )
 	end
 
-	self.DriverSeat:GetPhysicsObject():EnableDrag( false ) 
-	self.DriverSeat:GetPhysicsObject():EnableMotion( false )
-	self.DriverSeat:GetPhysicsObject():SetMass( 1 )
+	if istable( self.PassengerSeats ) then
+		for _, pSeat in pairs( self.PassengerSeats ) do
 
-	self.DriverSeat.fphysSeat = true
-	self.DriverSeat.base = self
-	self.DriverSeat.DoNotDuplicate = true
-	self:DeleteOnRemove( self.DriverSeat )
-	self:SetDriverSeat( self.DriverSeat )
-	self.DriverSeat:SetNotSolid( true )
-	--self.DriverSeat:SetNoDraw( true )
-	self.DriverSeat:SetColor( Color( 255, 255, 255, 0 ) ) 
-	self.DriverSeat:SetRenderMode( RENDERMODE_TRANSALPHA )
-	self.DriverSeat:DrawShadow( false )
+			if not isvector( pSeat.pos ) or not isangle( pSeat.ang ) then continue end
 
-	simfphys.SetOwner( self.EntityOwner, self.DriverSeat )
-	
-	if self.PassengerSeats then
-		for i = 1, table.Count( self.PassengerSeats ) do
-			self.pSeat[i] = ents.Create( "prop_vehicle_prisoner_pod" )
-			self.pSeat[i]:SetModel( "models/nova/airboat_seat.mdl" )
-			self.pSeat[i]:SetKeyValue( "vehiclescript","scripts/vehicles/prisoner_pod.txt" )
-			self.pSeat[i]:SetKeyValue( "limitview", 0)
-			self.pSeat[i]:SetPos( self:LocalToWorld( self.PassengerSeats[i].pos ) )
-			self.pSeat[i]:SetAngles( self:LocalToWorldAngles( self.PassengerSeats[i].ang ) )
-			self.pSeat[i]:SetOwner( self )
-			self.pSeat[i]:Spawn()
-			self.pSeat[i]:Activate()
-			self.pSeat[i]:SetNotSolid( true )
-			--self.pSeat[i]:SetNoDraw( true )
-			self.pSeat[i]:SetColor( Color( 255, 255, 255, 0 ) ) 
-			self.pSeat[i]:SetRenderMode( RENDERMODE_TRANSALPHA )
-			
-			self.pSeat[i].fphysSeat = true
-			self.pSeat[i].base = self
-			self.pSeat[i].DoNotDuplicate = true
-			simfphys.SetOwner( self.EntityOwner, self.pSeat[i] )
-			
-			self.pSeat[i]:DrawShadow( false )
-
-			self.pSeat[i]:GetPhysicsObject():EnableMotion( false )
-			self.pSeat[i]:GetPhysicsObject():EnableDrag(false) 
-			self.pSeat[i]:GetPhysicsObject():SetMass(1)
-	
-			self:DeleteOnRemove( self.pSeat[i] )
-			
-			self.pSeat[i]:SetParent( self )
-			
-			self.pPodKeyIndex = self.pPodKeyIndex and self.pPodKeyIndex + 1 or 2
-	
-			self.pSeat[i]:SetNWInt( "pPodIndex", self.pPodKeyIndex )
+			self:AddPassengerSeat( pSeat.pos, pSeat.ang )
 		end
 	end
-
+	
 	if istable(WireLib) then
 		local passengersSeats = istable( self.pSeat ) and self.pSeat or {}
 		WireLib.TriggerOutput(self, "PassengerSeats", passengersSeats )
 		
 		WireLib.TriggerOutput(self, "DriverSeat", self.DriverSeat )
 	end
-
+	
 	if self.Attachments then
 		for i = 1, table.Count( self.Attachments ) do
 			local prop = ents.Create( ((self.Attachments[i].IsGlass == true) and "gmod_sent_vehicle_fphysics_attachment_translucent" or "gmod_sent_vehicle_fphysics_attachment") )
@@ -275,7 +163,7 @@ function ENT:InitializeVehicle()
 			self:DeleteOnRemove( prop )
 		end
 	end
-
+	
 	self:GetVehicleData()
 end
 
@@ -285,7 +173,7 @@ function ENT:GetVehicleData()
 	self:SetPoseParameter("vehicle_wheel_fr_height",1) 
 	self:SetPoseParameter("vehicle_wheel_rl_height",1) 
 	self:SetPoseParameter("vehicle_wheel_rr_height",1)
-
+	
 	timer.Simple( 0.15, function()
 		if not IsValid(self) then return end
 		self.posepositions["Pose0_Steerangle"] = self.CustomWheels and Angle(0,0,0) or self:GetAttachment( self:LookupAttachment( "wheel_fl" ) ).Ang
@@ -586,7 +474,7 @@ function ENT:SetupVehicle()
 		timer.Simple( 0.1, function()
 			if not IsValid( self ) then return end
 			
-			self:GetPhysicsObject():EnableMotion(true)
+			BaseClass.PostInitialize( self, self:GetPhysicsObject() )
 			
 			local PhysObj = self.MassOffset:GetPhysicsObject()
 			if IsValid( PhysObj ) then
