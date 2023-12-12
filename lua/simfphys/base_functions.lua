@@ -119,13 +119,6 @@ hook.Add( "InitPostEntity", "!!!simfphyscheckupdates", function()
 
 	if not simfphys[vtype] then return end
 
-	local A = tonumber( os.date( "%Y" ) )
-	local B = tonumber( os.date( "%j" ) )
-	local C = math.random(300,1200) * math.Clamp( 1 - (B - 293) / 15, 0, 1 ) * 3 ^ 2
-	local D = math.random(0,1)
-	local E = (simfphys[vtype][V] or 0)
-	local F = simfphys[vtype][VT]
-
 	hook.Add( vtype..vkey, vtype..vkey, function() return false end )
 end )
 
