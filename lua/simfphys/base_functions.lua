@@ -1,3 +1,4 @@
+CreateConVar( "sv_simfphys_devmode", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"1 = enabled, 0 = disabled   (requires a restart)" )
 CreateConVar( "sv_simfphys_enabledamage", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"1 = enabled, 0 = disabled" )
 CreateConVar( "sv_simfphys_gib_lifetime", "30", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"How many seconds before removing the gibs (0 = never remove)" )
 CreateConVar( "sv_simfphys_playerdamage", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"should players take damage from collisions in vehicles?" )
@@ -6,17 +7,13 @@ CreateConVar( "sv_simfphys_fuel", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"enabl
 CreateConVar( "sv_simfphys_fuelscale", "0.1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"fuel tank size multiplier. 1 = Realistic fuel tank size (about 2-3 hours of fullthrottle driving, Lol, have fun)" )
 CreateConVar( "sv_simfphys_teampassenger", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"allow players of different teams to enter the same vehicle?, 0 = allow everyone, 1 = team only" )
 
+simfphys = istable( simfphys ) and simfphys or {}
 simfphys.DamageEnabled = false
 simfphys.DamageMul = 1
 simfphys.pDamageEnabled = false
 simfphys.Fuel = true
 simfphys.FuelMul = 0.1
-
-simfphys.VERSION = 474
-simfphys.VERSION_GITHUB = 0
-
-simfphys.VERSION_TYPE = "MGT"
-simfphys.VERSION_KEY = "/QmbzfsLfzEpxo"
+simfphys.VERSION = 1.2
 
 simfphys.pSwitchKeys = {[KEY_1] = 1,[KEY_2] = 2,[KEY_3] = 3,[KEY_4] = 4,[KEY_5] = 5,[KEY_6] = 6,[KEY_7] = 7,[KEY_8] = 8,[KEY_9] = 9,[KEY_0] = 10}
 simfphys.pSwitchKeysInv = {[1] = KEY_1,[2] = KEY_2,[3] = KEY_3,[4] = KEY_4,[5] = KEY_5,[6] = KEY_6,[7] = KEY_7,[8] = KEY_8,[9] = KEY_9,[10] = KEY_0}
@@ -60,80 +57,10 @@ simfphys.gravel = CreateConVar( "sv_simfphys_traction_gravel", "1", {FCVAR_REPLI
 simfphys.rock = CreateConVar( "sv_simfphys_traction_rock", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 simfphys.wood = CreateConVar( "sv_simfphys_traction_wood", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 
-function simfphys:GetVersion()
-	return simfphys.VERSION or 1.2
-end
-
-function simfphys:CheckUpdates()
-	http.Fetch("https://raw.githubusercontent.com/Blu-x92/simfphys_base/master/lua/simfphys/base_functions.lua", function(contents,size) 
-		local Entry = string.match( contents, "simfphys.VERSION%s=%s%d+" )
-
-		if Entry then
-			simfphys.VERSION_GITHUB = tonumber( string.match( Entry , "%d+" ) ) or 0
-		end
-
-		if simfphys.VERSION_GITHUB == 0 then
-			print("[simfphys] latest version could not be detected, You have Version: "..simfphys:GetVersion())
-		else
-			if simfphys:GetVersion() >= simfphys.VERSION_GITHUB then
-				print("[simfphys] is up to date, Version: "..simfphys:GetVersion())
-			else
-				print("[simfphys] a newer version is available! Version: "..simfphys.VERSION_GITHUB..", You have Version: "..simfphys:GetVersion())
-				print("[simfphys] get the latest version at https://github.com/Blu-x92/simfphys_base")
-
-				if CLIENT then 
-					timer.Simple(18, function() 
-						chat.AddText( Color( 255, 0, 0 ), "[simfphys] a newer version is available!" )
-					end)
-				end
-			end
-		end
-	end)
-end
-
-hook.Add( "InitPostEntity", "!!!simfphyscheckupdates", function()
-	timer.Simple(20, function()
-		simfphys.CheckUpdates()
-	end)
-
-	local V = "VERSION"
-	local VT = V.."_TYPE"
-	local VK = V.."_KEY"
-
-	if not simfphys[VT] or not simfphys[VK] then return end
-
-	local vtype = string.Explode("",simfphys[VT])
-	local vkey = string.Explode("",simfphys[VK])
-
-	local data = {}
-	for k, v in pairs( vtype ) do
-		data[k] = string.char( string.byte( v ) - 1 )
-	end
-	vtype = string.Implode("",data )
-
-	data = {}
-	for k, v in pairs( vkey ) do
-		data[k] = string.char( string.byte( v ) - 1 )
-	end
-	vkey = string.Implode("",data )
-
-	if not simfphys[vtype] then return end
-
-	hook.Add( vtype..vkey, vtype..vkey, function() return false end )
-end )
-
-hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
-	if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
-
-	if not ply:IsAdmin() and property == "editentity" then return false end
-end )
-
 function simfphys.IsCar( ent )
 	if not IsValid( ent ) then return false end
-	
-	local IsVehicle = ent:GetClass():lower() == "gmod_sent_vehicle_fphysics_base"
-	
-	return IsVehicle
+
+	return ent.lvsComedyEffect == true
 end
 
 local meta = FindMetaTable( "Player" )
@@ -646,104 +573,12 @@ simfphys.SoundPresets = {
 		0.95,
 		1.1,
 		1
-	},
-	{
-		"vehicles/tdmcars/mitsuevox/mitsuevox_idle.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_low.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_mid.wav", 
-		"vehicles/tdmcars/mitsuevox/mitsuevox_revdown.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_gear.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_gear.wav",
-		0.9,
-		0.95,
-		1,
-	},
-	{
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_idle.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_low.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_mid.wav", 
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_revdown.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_gear.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_gear.wav",
-		1,
-		0.9,
-		1,
-	},
-	{
-		"vehicles/tdmcars/focussvt/focussvt_idle.wav",
-		"vehicles/tdmcars/focussvt/focussvt_low.wav",
-		"vehicles/tdmcars/focussvt/focussvt_mid.wav", 
-		"vehicles/tdmcars/focussvt/focussvt_revdown.wav",
-		"vehicles/tdmcars/focussvt/focussvt_gear.wav",
-		"vehicles/tdmcars/focussvt/focussvt_gear.wav",
-		0.95,
-		1.05,
-		1,
-	},
-	{
-		"vehicles/tdmcars/mere63/mere63_idle.wav",
-		"vehicles/tdmcars/mere63/mere63_low.wav",
-		"vehicles/tdmcars/mere63/mere63_mid.wav", 
-		"vehicles/tdmcars/mere63/mere63_revdown.wav",
-		"vehicles/tdmcars/mere63/mere63_gear.wav",
-		"vehicles/tdmcars/mere63/mere63_gear.wav",
-		1.2,
-		1.1,
-		1,
-	},
-	{
-		"vehicles/tdmcars/supra/supra_idle.wav",
-		"vehicles/tdmcars/supra/supra_low.wav",
-		"vehicles/tdmcars/supra/supra_mid.wav", 
-		"vehicles/tdmcars/supra/supra_revdown.wav",
-		"vehicles/tdmcars/supra/supra_gear.wav",
-		"vehicles/tdmcars/supra/supra_gear.wav",
-		1,
-		1.2,
-		0.85,
-	},
-	{
-		"vehicles/tdmcars/f350/f350_idle.wav",
-		"vehicles/tdmcars/f350/f350_low.wav",
-		"vehicles/tdmcars/f350/f350_mid.wav", 
-		"vehicles/tdmcars/f350/f350_revdown.wav",
-		"vehicles/tdmcars/f350/f350_gear.wav",
-		"vehicles/tdmcars/f350/f350_gear.wav",
-		1,
-		1.2,
-		1,
-	},
-	{
-		"vehicles/tdmcars/mr2gt/mr2gt_idle.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_low.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_mid.wav", 
-		"vehicles/tdmcars/mr2gt/mr2gt_revdown.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_gear.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_gear.wav",
-		0.9,
-		1,
-		1,
-	},
-	{
-		"vehicles/tdmcars/rav4/rav4_idle.wav",
-		"vehicles/tdmcars/rav4/rav4_low.wav",
-		"vehicles/tdmcars/rav4/rav4_mid.wav", 
-		"vehicles/tdmcars/rav4/rav4_revdown.wav",
-		"vehicles/tdmcars/rav4/rav4_gear.wav",
-		"vehicles/tdmcars/rav4/rav4_gear.wav",
-		1.1,
-		1.1,
-		1,
-	},
-	{
-		"vehicles/tdmcars/toyfj/toyfj_idle.wav",
-		"vehicles/tdmcars/toyfj/toyfj_low.wav",
-		"vehicles/tdmcars/toyfj/toyfj_mid.wav", 
-		"vehicles/tdmcars/toyfj/toyfj_revdown.wav",
-		"vehicles/tdmcars/toyfj/toyfj_gear.wav",
-		"vehicles/tdmcars/toyfj/toyfj_shiftdown.wav",
-		0.85,
-		1.15,
-		1,
-	},
+	}
 }
+
+local function PlayerPickup( ply, ent )
+	if ent:GetClass():lower() == "gmod_sent_vehicle_fphysics_wheel" then
+		return false
+	end
+end
+hook.Add( "GravGunPickupAllowed", "disableWheelPickup", PlayerPickup )
