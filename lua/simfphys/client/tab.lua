@@ -795,6 +795,7 @@ spawnmenu.AddContentType( "simfphys_vehicles", function( container, obj )
 
 end )
 
+list.Set( "ContentCategoryIcons", "simfphys", "icon16/simfphys.png" )
 list.Set( "ContentCategoryIcons", "[simfphys] - Half Life 2 - Prewar", "icon16/simfphys_prewar.png" )
 list.Set( "ContentCategoryIcons", "[simfphys] - Half Life 2 / Synergy", "icon16/simfphys_hl2.png" )
 list.Set( "ContentCategoryIcons", "[simfphys] - Armed Vehicles", "icon16/simfphys_armed.png" )
