@@ -12,7 +12,7 @@ simfphys.pDamageEnabled = false
 simfphys.Fuel = true
 simfphys.FuelMul = 0.1
 
-simfphys.VERSION = 474
+simfphys.VERSION = 475
 simfphys.VERSION_GITHUB = 0
 
 simfphys.VERSION_TYPE = "MGT"
