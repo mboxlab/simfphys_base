@@ -602,10 +602,10 @@ local function buildserversettingsmenu( self )
 	Background:SetSize( 350, y )
 end
 
+local function PopulateVehicles( pnlContent, original_tree, original_node, usenode )
+	local node = usenode and original_node or original_tree
 
-hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlContent, ogtree, node )
-
-	local tree = ogtree:AddNode( "[simfphys]", "icon16/cog.png" )
+	local tree = node:AddNode( usenode and "simfphys" or "[simfphys]", "icon16/lvs_simfphys.png" )
 
 	local Categorised = {}
 
@@ -632,7 +632,7 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 			node = tree
 		else
 			-- Add a node to the tree
-			node = tree:AddNode( CategoryName, "icon16/bricks.png" )
+			node = tree:AddNode( CategoryName, "icon16/lvs_simfphys_blue.png" )
 		end
 
 		-- When we click on the node - populate it using this function
@@ -742,7 +742,15 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 
 	-- call original hook
 	hook.Run( "SimfphysPopulateVehicles", pnlContent, tree, node )
-end )
+end
+
+timer.Simple(0, function()
+	if LVS then
+		hook.Add( "LVS.PopulateVehicles", "!!!add_simfphys_vehicles", function( lvsNode, pnlContent, tree ) PopulateVehicles( pnlContent, tree, lvsNode, true ) end )
+	else
+		hook.Add( "PopulateVehicles", "!!!add_simfphys_vehicles", PopulateVehicles )
+	end
+end)
 
 spawnmenu.AddContentType( "simfphys_vehicles", function( container, obj )
 	if not obj.material then return end
