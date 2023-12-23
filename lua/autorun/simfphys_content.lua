@@ -1194,7 +1194,7 @@ local V = {
 		LightsTable = "gta4_bus",
 
 		OnSpawn = function(ent)
-			ent.doornum = 0
+			ent.doornum = false
 			ent.doorMoving = false
 
 			ent.doormdl = ents.Create("prop_physics")
@@ -1222,23 +1222,16 @@ local V = {
 			end
 
 			if ply:KeyDown(2048) and IsValid(ent:GetDriver()) then
-				if ent.doornum == 0 and not ent.doorMoving then
-					ent:PlayAnimation("open")
+				if not IsValid(ent.doormdl) then
+					ent.OnTick = function() end
+					return 
+				end
+				if not ent.doorMoving then
+					ent.doornum = not ent.doornum
+					ent:PlayAnimation(ent.doornum and "open" or "close")
 					ent.doorMoving = true
-					ent.doormdl:SetNotSolid(true)
-					ent.doornum = 1
-					sound.Play("gta4/vehicles/shared/BUS_DOOR_OPEN.wav", ent:GetPos())
-					timer.Simple(1, function()
-						if IsValid(ent) then
-							ent.doorMoving = false
-						end
-					end)
-				elseif not ent.doorMoving then
-					ent:PlayAnimation("close")
-					ent.doorMoving = true
-					ent.doormdl:SetNotSolid(false)
-					ent.doornum = 0
-					sound.Play("gta4/vehicles/shared/BUS_DOOR_CLOSE.wav", ent:GetPos())
+					ent.doormdl:SetNotSolid(ent.doornum)
+					sound.Play(ent.doornum and "gta4/vehicles/shared/BUS_DOOR_OPEN.wav" or "gta4/vehicles/shared/BUS_DOOR_CLOSE.wav", ent:GetPos())
 					timer.Simple(1, function()
 						if IsValid(ent) then
 							ent.doorMoving = false
