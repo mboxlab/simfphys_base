@@ -605,7 +605,7 @@ end
 local function PopulateVehicles( pnlContent, original_tree, original_node, usenode )
 	local node = usenode and original_node or original_tree
 
-	local tree = node:AddNode( usenode and "simfphys" or "[simfphys]", "icon16/simfphys.png" )
+	local tree = node:AddNode( usenode and "simfphys" or "Машины", "icon16/simfphys.png" )
 
 	local Categorised = {}
 
@@ -754,11 +754,11 @@ local function PopulateVehicles( pnlContent, original_tree, original_node, useno
 end
 
 timer.Simple(0, function()
-	if LVS then
-		hook.Add( "LVS.PopulateVehicles", "!!!add_simfphys_vehicles", function( lvsNode, pnlContent, tree ) PopulateVehicles( pnlContent, tree, lvsNode, true ) end )
-	else
+	-- if LVS then
+	-- 	hook.Add( "LVS.PopulateVehicles", "!!!add_simfphys_vehicles", function( lvsNode, pnlContent, tree ) PopulateVehicles( pnlContent, tree, lvsNode, true ) end )
+	-- else
 		hook.Add( "PopulateVehicles", "!!!add_simfphys_vehicles", PopulateVehicles )
-	end
+	-- end
 end)
 
 spawnmenu.AddContentType( "simfphys_vehicles", function( container, obj )
