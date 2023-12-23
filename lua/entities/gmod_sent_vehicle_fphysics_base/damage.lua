@@ -1,4 +1,6 @@
 function ENT:ApplyDamage( damage, type )
+	local own = self:CPPIGetOwner() 
+	if IsValid(own) and own:GetNWBool("InBuildmode") then return end
 	if type == DMG_BLAST then 
 		damage = damage * 10
 	end

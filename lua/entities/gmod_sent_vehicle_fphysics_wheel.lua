@@ -446,6 +446,8 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage( dmginfo )
+		local own = self:CPPIGetOwner() 
+		if IsValid(own) and own:GetNWBool("InBuildmode") then return end
 		self:TakePhysicsDamage( dmginfo )
 		
 		if self:GetDamaged() or not simfphys.DamageEnabled then return end
