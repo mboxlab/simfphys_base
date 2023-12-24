@@ -92,9 +92,9 @@ function simfphys:CheckUpdates()
 end
 
 hook.Add( "InitPostEntity", "!!!simfphyscheckupdates", function()
-	timer.Simple(20, function()
-		simfphys.CheckUpdates()
-	end)
+	-- timer.Simple(20, function()
+	-- 	simfphys.CheckUpdates()
+	-- end)
 
 	local V = "VERSION"
 	local VT = V.."_TYPE"
