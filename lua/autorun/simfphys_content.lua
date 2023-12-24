@@ -1,5 +1,5 @@
 if SERVER then
-	resource.AddWorkshop("3121070298")
+	-- resource.AddWorkshop("3121070298")
 end
 local CategoryCI = "Коммерческие/Промышленные"
 local CategoryPS = "Государственная служба"
