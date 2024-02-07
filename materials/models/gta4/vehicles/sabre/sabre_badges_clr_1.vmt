@@ -1,0 +1,15 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/sabre/sabre_badges"
+"$bumpmap" "models/gta4/vehicles/sabre/sabre_badges_normal"
+
+"$halflambert" 1
+"$alphatest" 1
+
+Proxies {
+    		ColorSlot1{
+			name "Primary Color"
+       			resultVar $color2
+           		}
+	}
+}

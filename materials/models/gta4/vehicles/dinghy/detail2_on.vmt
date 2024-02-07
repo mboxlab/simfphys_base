@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/vehshare/vehicle_generic_detail2"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+
+"$detail" "models/gta4/vehicles/vehshare/vehicle_generic_detail2"
+"$detailscale" 1
+"$detailblendmode" 6
+
+"$envmap" "env_cubemap"
+"$normalmapalphaenvmapmask" 1
+}

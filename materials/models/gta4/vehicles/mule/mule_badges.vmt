@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/mule/mule_badges"
+"$bumpmap" "models/gta4/vehicles/mule/mule_badges_n"
+
+"$halflambert" 1
+"$alphatest" 1
+}

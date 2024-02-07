@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/futo/futo_lights_glass"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.2 .2 .2]"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+}

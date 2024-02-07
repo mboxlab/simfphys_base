@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/blista/blista_lights_glass"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.2 .2 .2]"
+
+"$detail" "models/gta4/vehicles/blista/blista_lights_glass"
+"$detailscale" 1
+"$detailblendfactor" 10
+"$detailblendmode" 5
+
+"$blendtintbybasealpha" 1
+}

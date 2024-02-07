@@ -1,0 +1,16 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/stockade/nstockade_livery"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/stockade/stockade_dirtmap"
+"$envmaptint" "[.5 .5 .5]"
+
+"$detail" "models/gta4/vehicles/stockade/stockade_dirtmap_inv"
+"$detailscale" "1"
+"$detailblendfactor" "0.0075"
+"$detailblendmode" "3"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+}

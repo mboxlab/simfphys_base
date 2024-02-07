@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/dinghy/vehicle_generic_carbon"
+"$bumpmap" "models/gta4/vehicles/dinghy/vehicle_generic_carbon_normal"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+
+"$envmap" "env_cubemap"
+"$normalmapalphaenvmapmask" 1
+}

@@ -1,0 +1,19 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/vehshare/vehicle_generic_smallspecmap"
+"$bumpmap" "models/gta4/vehicles/yankee/yankee2cabnormal"
+
+"$envmap" "env_cubemap"
+"$envmapsaturation" "[.5 .5 .5]"
+"$normalmapalphaenvmapmask" 1
+
+"$detail" "models/gta4/vehicles/vehshare_truck/vehicle_genericmud_truck"
+"$detailscale" "1"
+"$detailblendfactor" "0.75"
+"$detailblendmode" "0"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+
+
+}

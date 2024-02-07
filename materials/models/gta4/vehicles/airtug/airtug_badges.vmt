@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/airtug/airtug_badges"
+
+"$halflambert" 1
+"$translucent" 1
+}

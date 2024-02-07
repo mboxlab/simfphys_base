@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/vehshare/vehicle_generic_glasswindows2"
+"$translucent" 1
+}

@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/merit/taxi_detail"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+}

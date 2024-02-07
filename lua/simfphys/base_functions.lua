@@ -1,3 +1,4 @@
+CreateConVar( "sv_simfphys_devmode", "1", {FCVAR_NONE},"does nothing, this just here for backwards compatibility. Restrict the tools instead." )
 CreateConVar( "sv_simfphys_enabledamage", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"1 = enabled, 0 = disabled" )
 CreateConVar( "sv_simfphys_gib_lifetime", "30", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"How many seconds before removing the gibs (0 = never remove)" )
 CreateConVar( "sv_simfphys_playerdamage", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"should players take damage from collisions in vehicles?" )
@@ -12,11 +13,8 @@ simfphys.pDamageEnabled = false
 simfphys.Fuel = true
 simfphys.FuelMul = 0.1
 
-simfphys.VERSION = 475
+simfphys.VERSION = 468
 simfphys.VERSION_GITHUB = 0
-
-simfphys.VERSION_TYPE = "MGT"
-simfphys.VERSION_KEY = "/QmbzfsLfzEpxo"
 
 simfphys.pSwitchKeys = {[KEY_1] = 1,[KEY_2] = 2,[KEY_3] = 3,[KEY_4] = 4,[KEY_5] = 5,[KEY_6] = 6,[KEY_7] = 7,[KEY_8] = 8,[KEY_9] = 9,[KEY_0] = 10}
 simfphys.pSwitchKeysInv = {[1] = KEY_1,[2] = KEY_2,[3] = KEY_3,[4] = KEY_4,[5] = KEY_5,[6] = KEY_6,[7] = KEY_7,[8] = KEY_8,[9] = KEY_9,[10] = KEY_0}
@@ -60,120 +58,54 @@ simfphys.gravel = CreateConVar( "sv_simfphys_traction_gravel", "1", {FCVAR_REPLI
 simfphys.rock = CreateConVar( "sv_simfphys_traction_rock", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 simfphys.wood = CreateConVar( "sv_simfphys_traction_wood", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 
-function simfphys:GetVersion()
-	return simfphys.VERSION or 1.2
-end
-
-function simfphys:CheckUpdates()
-	http.Fetch("https://raw.githubusercontent.com/Blu-x92/simfphys_base/master/lua/simfphys/base_functions.lua", function(contents,size) 
-		local Entry = string.match( contents, "simfphys.VERSION%s=%s%d+" )
-
-		if Entry then
-			simfphys.VERSION_GITHUB = tonumber( string.match( Entry , "%d+" ) ) or 0
-		end
-
-		if simfphys.VERSION_GITHUB == 0 then
-			print("[simfphys] latest version could not be detected, You have Version: "..simfphys:GetVersion())
-		else
-			if simfphys:GetVersion() >= simfphys.VERSION_GITHUB then
-				print("[simfphys] is up to date, Version: "..simfphys:GetVersion())
-			else
-				print("[simfphys] a newer version is available! Version: "..simfphys.VERSION_GITHUB..", You have Version: "..simfphys:GetVersion())
-				print("[simfphys] get the latest version at https://github.com/Blu-x92/simfphys_base")
-
-				if CLIENT then 
-					timer.Simple(18, function() 
-						chat.AddText( Color( 255, 0, 0 ), "[simfphys] a newer version is available!" )
-					end)
-				end
-			end
-		end
-	end)
-end
-
-hook.Add( "InitPostEntity", "!!!simfphyscheckupdates", function()
-	-- timer.Simple(20, function()
-	-- 	simfphys.CheckUpdates()
-	-- end)
-
-	local V = "VERSION"
-	local VT = V.."_TYPE"
-	local VK = V.."_KEY"
-
-	if not simfphys[VT] or not simfphys[VK] then return end
-
-	local vtype = string.Explode("",simfphys[VT])
-	local vkey = string.Explode("",simfphys[VK])
-
-	local data = {}
-	for k, v in pairs( vtype ) do
-		data[k] = string.char( string.byte( v ) - 1 )
-	end
-	vtype = string.Implode("",data )
-
-	data = {}
-	for k, v in pairs( vkey ) do
-		data[k] = string.char( string.byte( v ) - 1 )
-	end
-	vkey = string.Implode("",data )
-
-	if not simfphys[vtype] then return end
-
-	hook.Add( vtype..vkey, vtype..vkey, function() return false end )
-end )
-
-hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
-	if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
-
-	if not ply:IsAdmin() and property == "editentity" then return false end
-end )
-
 function simfphys.IsCar( ent )
 	if not IsValid( ent ) then return false end
-	
+
 	local IsVehicle = ent:GetClass():lower() == "gmod_sent_vehicle_fphysics_base"
-	
+
 	return IsVehicle
 end
 
 local meta = FindMetaTable( "Player" )
 function meta:IsDrivingSimfphys()
+	if not self:InVehicle() then return false end
+
 	local Car = self:GetSimfphys()
 	local Pod = self:GetVehicle()
-	
+
 	if not IsValid( Pod ) or not IsValid( Car ) then return false end
 	if not Car.GetDriverSeat or not isfunction( Car.GetDriverSeat ) then return false end
-	
+
 	return Pod == Car:GetDriverSeat()
 end
 
 function meta:GetSimfphys()
-	if not self:InVehicle() then return NULL end
-	
+	if not self:InVehicle() then return NULL, false end
+
 	local Pod = self:GetVehicle()
-	
-	if not IsValid( Pod ) then return NULL end
-	
+
+	if not IsValid( Pod ) then return NULL, false end
+
 	if Pod.SPHYSchecked == true then
-		
-		return Pod.SPHYSBaseEnt
-		
+
+		return Pod.SPHYSBaseEnt, true
+
 	elseif Pod.SPHYSchecked == nil then
 
 		local Parent = Pod:GetParent()
-		
-		if not IsValid( Parent ) then Pod.SPHYSchecked = false return NULL end
-		
-		if not simfphys.IsCar( Parent ) then Pod.SPHYSchecked = false return NULL end
-		
+
+		if not IsValid( Parent ) then Pod.SPHYSchecked = false return NULL, false end
+
+		if not simfphys.IsCar( Parent ) then Pod.SPHYSchecked = false return NULL, false end
+
 		Pod.SPHYSchecked = true
 		Pod.SPHYSBaseEnt = Parent
 		Pod.vehiclebase = Parent -- compatibility for old addons
-		
-		return Parent
+
+		return Parent, true
 	else
-		
-		return NULL
+
+		return NULL, false
 	end
 end
 
@@ -184,18 +116,18 @@ if SERVER then
 	util.AddNetworkString( "simfphys_lightsfixall" )
 	util.AddNetworkString( "simfphys_backfire" )
 	util.AddNetworkString( "simfphys_plyrequestinfo" )
-	
+
 	net.Receive( "simfphys_plyrequestinfo", function( length, ply )
 		if not IsValid( ply ) then return end
-		
+
 		ply.simeditor_nextrequest = isnumber( ply.simeditor_nextrequest ) and ply.simeditor_nextrequest or 0
-		
+
 		if ply.simeditor_nextrequest > CurTime() then return end
-		
+
 		ply.simeditor_nextrequest = CurTime() + 0.5
-		
+
 		local ent = ply:GetEyeTrace().Entity
-		
+
 		if not simfphys.IsCar( ent ) then return end
 
 		local ent = net.ReadEntity()
@@ -203,7 +135,7 @@ if SERVER then
 		local data = simfphys.BuildVehicleInfo( ent )
 
 		if not data then return end
-		
+
 		net.Start( "simfphys_plyrequestinfo" )
 			net.WriteEntity( ent )
 			net.WriteFloat( data["torque"] )
@@ -212,56 +144,60 @@ if SERVER then
 			net.WriteFloat( data["weight"] )
 		net.Send( ply )
 	end )
-	
-	net.Receive( "simfphys_turnsignal", function( length, ply )
+
+	net.Receive( "simfphys_turnsignal", function( _, ply )
 		if not ply:IsDrivingSimfphys() then return end
 
+		ply.simturnsignal_nextrequest = ply.simturnsignal_nextrequest or 0
+		if ply.simturnsignal_nextrequest > CurTime() then return end
+		ply.simturnsignal_nextrequest = CurTime() + 0.5
+
 		local ent = net.ReadEntity()
-		local mode = net.ReadInt( 32 ) 
+		local mode = net.ReadInt( 3 )
 
 		if not IsValid( ent ) or ply:GetSimfphys() ~= ent then return end
 		ent:SetTSInternal( mode )
-		
+
 		net.Start( "simfphys_turnsignal" )
 			net.WriteEntity( ent )
-			net.WriteInt( mode, 32 )
+			net.WriteInt( mode, 3 )
 		net.Broadcast()
 	end )
-	
+
 	net.Receive( "simfphys_settings", function( length, ply )
 		if not IsValid( ply ) or not ply:IsSuperAdmin() then return end
-		
+
 		local dmgEnabled = tostring(net.ReadBool() and 1 or 0)
 		local giblifetime = tostring(net.ReadFloat())
-		
+
 		local dmgMul = tostring(net.ReadFloat())
 		local pdmgEnabled = tostring(net.ReadBool() and 1 or 0)
-		
+
 		local fuel = tostring(net.ReadBool() and 1 or 0)
 		local fuelscale = tostring(net.ReadFloat())
-		
-		local newtraction = net.ReadTable() 
-		
+
+		local newtraction = net.ReadTable()
+
 		local teamonly = tostring(net.ReadBool() and 1 or 0)
-		
-		RunConsoleCommand("sv_simfphys_enabledamage", dmgEnabled ) 
+
+		RunConsoleCommand("sv_simfphys_enabledamage", dmgEnabled )
 		RunConsoleCommand("sv_simfphys_gib_lifetime", giblifetime )
-		RunConsoleCommand("sv_simfphys_damagemultiplicator", dmgMul ) 
-		RunConsoleCommand("sv_simfphys_playerdamage", pdmgEnabled ) 
-		RunConsoleCommand("sv_simfphys_fuel", fuel ) 
-		RunConsoleCommand("sv_simfphys_fuelscale", fuelscale ) 
-		
-		RunConsoleCommand("sv_simfphys_teampassenger", teamonly ) 
-		
+		RunConsoleCommand("sv_simfphys_damagemultiplicator", dmgMul )
+		RunConsoleCommand("sv_simfphys_playerdamage", pdmgEnabled )
+		RunConsoleCommand("sv_simfphys_fuel", fuel )
+		RunConsoleCommand("sv_simfphys_fuelscale", fuelscale )
+
+		RunConsoleCommand("sv_simfphys_teampassenger", teamonly )
+
 		for k, v in pairs( newtraction ) do
-			RunConsoleCommand("sv_simfphys_traction_"..k, v) 
+			RunConsoleCommand("sv_simfphys_traction_"..k, v)
 		end
 		simfphys.UpdateFrictionData()
 	end)
 
 	function simfphys.BuildVehicleInfo( ent )
 		if not simfphys.IsCar( ent ) then return false end
-		
+
 		local WheelRad = ent.RearWheelRadius
 
 		if ent.FrontWheelPowered and ent.RearWheelRadius then
@@ -277,45 +213,45 @@ if SERVER then
 				Mass = Mass + EPOBJ:GetMass()
 			end
 		end
-		
+
 		local data = {}
 		data["torque"] = ent:GetMaxTorque() * (WheelRad / 10) * ent:GetEfficiency() * (1 + (ent:GetTurboCharged() and 0.3 or 0) + (ent:GetSuperCharged() and 0.48 or 0))
 		data["horsepower"] = (data["torque"] * ent:GetLimitRPM() / 9548.8) * 1.34
 		data["maxspeed"] = ((ent:GetLimitRPM() * ent.Gears[ table.Count( ent.Gears ) ] * ent:GetDifferentialGear()) * 3.14 * WheelRad * 2) / 52
 		data["weight"] = Mass
-		
+
 		return data
 	end
-	
+
 	function simfphys.SpawnVehicleSimple( spawnname, pos, ang )
-		
+
 		if not isstring( spawnname ) then print("invalid spawnname") return NULL end
 		if not isvector( pos ) then print("invalid spawn position") return NULL end
 		if not isangle( ang ) then print("invalid spawn angle") return NULL end
-		
+
 		local vehicle = list.Get( "simfphys_vehicles" )[ spawnname ]
-		
+
 		if not vehicle then print("vehicle \""..spawnname.."\" does not exist!") return NULL end
-		
+
 		local Ent = simfphys.SpawnVehicle( nil, pos, ang, vehicle.Model, vehicle.Class, spawnname, vehicle, true )
-		
+
 		return Ent
 	end
-	
+
 	function simfphys.SpawnVehicle( Player, Pos, Ang, Model, Class, VName, VTable, bNoOwner )
-		
+
 		if not bNoOwner then
 			if not gamemode.Call( "PlayerSpawnVehicle", Player, Model, VName, VTable ) then return end
 		end
 
-		if not file.Exists( Model, "GAME" ) then 
+		if not file.Exists( Model, "GAME" ) then
 			Player:PrintMessage( HUD_PRINTTALK, "ERROR: \""..Model.."\" does not exist! (Class: "..VName..")")
 			return
 		end
-		
+
 		local Ent = ents.Create( "gmod_sent_vehicle_fphysics_base" )
 		if not Ent then return NULL end
-		
+
 		Ent:SetModel( Model )
 		Ent:SetAngles( Ang )
 		Ent:SetPos( Pos )
@@ -327,28 +263,28 @@ if SERVER then
 		Ent.VehicleTable = VTable
 		Ent.EntityOwner = Player
 		Ent:SetSpawn_List( VName )
-		
+
 		if VTable.Members then
 			table.Merge( Ent, VTable.Members )
-			
+
 			if Ent.ModelInfo then
 				if Ent.ModelInfo.Bodygroups then
 					for i = 1, table.Count( Ent.ModelInfo.Bodygroups ) do
-						Ent:SetBodygroup(i, Ent.ModelInfo.Bodygroups[i] ) 
+						Ent:SetBodygroup(i, Ent.ModelInfo.Bodygroups[i] )
 					end
 				end
-				
+
 				if Ent.ModelInfo.Skin then
 					Ent:SetSkin( Ent.ModelInfo.Skin )
 				end
-				
+
 				if Ent.ModelInfo.Color then
 					Ent:SetColor( Ent.ModelInfo.Color )
-					
+
 					local Color = Ent.ModelInfo.Color
 					local dot = Color.r * Color.g * Color.b * Color.a
 					Ent.OldColor = dot
-					
+
 					local data = {
 						Color = Color,
 						RenderMode = 0,
@@ -357,45 +293,45 @@ if SERVER then
 					duplicator.StoreEntityModifier( Ent, "colour", data )
 				end
 			end
-			
+
 			Ent:SetTireSmokeColor(Vector(180,180,180) / 255)
-			
+
 			Ent.Turbocharged = Ent.Turbocharged or false
 			Ent.Supercharged = Ent.Supercharged or false
-			
+
 			Ent:SetEngineSoundPreset( Ent.EngineSoundPreset )
 			Ent:SetMaxTorque( Ent.PeakTorque )
 
 			Ent:SetDifferentialGear( Ent.DifferentialGear )
-			
+
 			Ent:SetSteerSpeed( Ent.TurnSpeed )
 			Ent:SetFastSteerConeFadeSpeed( Ent.SteeringFadeFastSpeed )
 			Ent:SetFastSteerAngle( Ent.FastSteeringAngle )
-			
+
 			Ent:SetEfficiency( Ent.Efficiency )
 			Ent:SetMaxTraction( Ent.MaxGrip )
 			Ent:SetTractionBias( Ent.GripOffset / Ent.MaxGrip )
 			Ent:SetPowerDistribution( Ent.PowerBias )
-			
+
 			Ent:SetBackFire( Ent.Backfire or false )
 			Ent:SetDoNotStall( Ent.DoNotStall or false )
-			
+
 			Ent:SetIdleRPM( Ent.IdleRPM )
 			Ent:SetLimitRPM( Ent.LimitRPM )
 			Ent:SetRevlimiter( Ent.Revlimiter or false )
 			Ent:SetPowerBandEnd( Ent.PowerbandEnd )
 			Ent:SetPowerBandStart( Ent.PowerbandStart )
-			
+
 			Ent:SetTurboCharged( Ent.Turbocharged )
 			Ent:SetSuperCharged( Ent.Supercharged )
 			Ent:SetBrakePower( Ent.BrakePower )
-			
+
 			Ent:SetLights_List( Ent.LightsTable or "no_lights" )
-			
+
 			Ent:SetBulletProofTires( Ent.BulletProofTires or false )
-			
+
 			Ent:SetBackfireSound( Ent.snd_backfire or "" )
-			
+
 			if not simfphys.WeaponSystemRegister then
 				if simfphys.ManagedVehicles then
 					print("[SIMFPHYS ARMED] IS OUT OF DATE")
@@ -404,7 +340,7 @@ if SERVER then
 				timer.Simple( 0.2, function()
 					simfphys.WeaponSystemRegister( Ent )
 				end )
-				
+
 				if (simfphys.armedAutoRegister and not simfphys.armedAutoRegister()) or simfphys.RegisterEquipment then
 					print("[SIMFPHYS ARMED]: ONE OF YOUR ADDITIONAL SIMFPHYS-ARMED PACKS IS CAUSING CONFLICTS!!!")
 					print("[SIMFPHYS ARMED]: PRECAUTIONARY RESTORING FUNCTION:")
@@ -417,52 +353,66 @@ if SERVER then
 					print("[SIMFPHYS ARMED]: simfphys.RegisterEquipment")
 					print("[SIMFPHYS ARMED]: CLEARING OUTDATED ''RegisterEquipment'' HOOK")
 					print("[SIMFPHYS ARMED]: !!!FUNCTIONALITY IS NOT GUARANTEED!!!")
-				
+
 					simfphys.FireHitScan = function( data ) simfphys.FireBullet( data ) end
 					simfphys.FirePhysProjectile = function( data ) simfphys.FirePhysBullet( data ) end
 					simfphys.RegisterCrosshair = function( ent, data ) simfphys.xhairRegister( ent, data ) end
-					simfphys.RegisterCamera = 
+					simfphys.RegisterCamera =
 						function( ent, offset_firstperson, offset_thirdperson, bLocalAng, attachment )
 							simfphys.CameraRegister( ent, offset_firstperson, offset_thirdperson, bLocalAng, attachment )
 						end
-					
+
 					hook.Remove( "PlayerSpawnedVehicle","simfphys_armedvehicles" )
 					simfphys.RegisterEquipment = nil
 					simfphys.armedAutoRegister = function( vehicle ) simfphys.WeaponSystemRegister( vehicle ) return true end
 				end
 			end
-			
+
 			duplicator.StoreEntityModifier( Ent, "VehicleMemDupe", VTable.Members )
 		end
-		
+
 		if IsValid( Player ) then
 			gamemode.Call( "PlayerSpawnedVehicle", Player, Ent )
-			
+
 			return Ent
 		end
-		
+
 		return Ent
 	end
-	
+
 	function simfphys.SetOwner( ply, entity )
 		if not IsValid( entity ) or not IsValid( ply ) then return end
-		
+
 		if CPPI then
 			if not IsEntity( ply ) then return end
-			
+
 			if IsValid( ply ) then
 				entity:CPPISetOwner( ply )
 			end
 		end
 	end
+
+	-- hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
+	-- 	if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
+
+	-- 	if not ply:IsAdmin() and property == "editentity" then
+	-- 		if (GetConVar("sv_simfphys_devmode"):GetInt() or 1) < 1 then return false end
+	-- 	end
+	-- end )
 end
 
 if CLIENT then
+	-- hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
+	-- 	if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
+
+	-- 	if not ply:IsAdmin() and property == "editentity" then return false end
+	-- end )
+
 	net.Receive( "simfphys_plyrequestinfo", function( length )
 		local ent = net.ReadEntity()
-		
+
 		if not simfphys.IsCar( ent ) then return end
-		
+
 		ent.VehicleInfo = {}
 		ent.VehicleInfo["torque"] =  net.ReadFloat()
 		ent.VehicleInfo["horsepower"] = net.ReadFloat()
@@ -473,7 +423,7 @@ end
 
 function simfphys.UpdateFrictionData()
 	simfphys.TractionData = {}
-	
+
 	timer.Simple( 0.1,function()
 		simfphys.TractionData["ice"] = simfphys.ice:GetFloat()
 		simfphys.TractionData["gmod_ice"] = simfphys.gmod_ice:GetFloat()
@@ -646,104 +596,12 @@ simfphys.SoundPresets = {
 		0.95,
 		1.1,
 		1
-	},
-	{
-		"vehicles/tdmcars/mitsuevox/mitsuevox_idle.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_low.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_mid.wav", 
-		"vehicles/tdmcars/mitsuevox/mitsuevox_revdown.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_gear.wav",
-		"vehicles/tdmcars/mitsuevox/mitsuevox_gear.wav",
-		0.9,
-		0.95,
-		1,
-	},
-	{
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_idle.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_low.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_mid.wav", 
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_revdown.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_gear.wav",
-		"vehicles/tdmcars/for_taurus_13/for_taurus_13_gear.wav",
-		1,
-		0.9,
-		1,
-	},
-	{
-		"vehicles/tdmcars/focussvt/focussvt_idle.wav",
-		"vehicles/tdmcars/focussvt/focussvt_low.wav",
-		"vehicles/tdmcars/focussvt/focussvt_mid.wav", 
-		"vehicles/tdmcars/focussvt/focussvt_revdown.wav",
-		"vehicles/tdmcars/focussvt/focussvt_gear.wav",
-		"vehicles/tdmcars/focussvt/focussvt_gear.wav",
-		0.95,
-		1.05,
-		1,
-	},
-	{
-		"vehicles/tdmcars/mere63/mere63_idle.wav",
-		"vehicles/tdmcars/mere63/mere63_low.wav",
-		"vehicles/tdmcars/mere63/mere63_mid.wav", 
-		"vehicles/tdmcars/mere63/mere63_revdown.wav",
-		"vehicles/tdmcars/mere63/mere63_gear.wav",
-		"vehicles/tdmcars/mere63/mere63_gear.wav",
-		1.2,
-		1.1,
-		1,
-	},
-	{
-		"vehicles/tdmcars/supra/supra_idle.wav",
-		"vehicles/tdmcars/supra/supra_low.wav",
-		"vehicles/tdmcars/supra/supra_mid.wav", 
-		"vehicles/tdmcars/supra/supra_revdown.wav",
-		"vehicles/tdmcars/supra/supra_gear.wav",
-		"vehicles/tdmcars/supra/supra_gear.wav",
-		1,
-		1.2,
-		0.85,
-	},
-	{
-		"vehicles/tdmcars/f350/f350_idle.wav",
-		"vehicles/tdmcars/f350/f350_low.wav",
-		"vehicles/tdmcars/f350/f350_mid.wav", 
-		"vehicles/tdmcars/f350/f350_revdown.wav",
-		"vehicles/tdmcars/f350/f350_gear.wav",
-		"vehicles/tdmcars/f350/f350_gear.wav",
-		1,
-		1.2,
-		1,
-	},
-	{
-		"vehicles/tdmcars/mr2gt/mr2gt_idle.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_low.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_mid.wav", 
-		"vehicles/tdmcars/mr2gt/mr2gt_revdown.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_gear.wav",
-		"vehicles/tdmcars/mr2gt/mr2gt_gear.wav",
-		0.9,
-		1,
-		1,
-	},
-	{
-		"vehicles/tdmcars/rav4/rav4_idle.wav",
-		"vehicles/tdmcars/rav4/rav4_low.wav",
-		"vehicles/tdmcars/rav4/rav4_mid.wav", 
-		"vehicles/tdmcars/rav4/rav4_revdown.wav",
-		"vehicles/tdmcars/rav4/rav4_gear.wav",
-		"vehicles/tdmcars/rav4/rav4_gear.wav",
-		1.1,
-		1.1,
-		1,
-	},
-	{
-		"vehicles/tdmcars/toyfj/toyfj_idle.wav",
-		"vehicles/tdmcars/toyfj/toyfj_low.wav",
-		"vehicles/tdmcars/toyfj/toyfj_mid.wav", 
-		"vehicles/tdmcars/toyfj/toyfj_revdown.wav",
-		"vehicles/tdmcars/toyfj/toyfj_gear.wav",
-		"vehicles/tdmcars/toyfj/toyfj_shiftdown.wav",
-		0.85,
-		1.15,
-		1,
-	},
+	}
 }
+
+local function PlayerPickup( ply, ent )
+	if ent:GetClass():lower() == "gmod_sent_vehicle_fphysics_wheel" then
+		return false
+	end
+end
+hook.Add( "GravGunPickupAllowed", "disableWheelPickup", PlayerPickup )

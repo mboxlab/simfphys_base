@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/merit/rom_stickers"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/merit/rom_stickers_spec"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+}

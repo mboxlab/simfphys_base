@@ -1,0 +1,12 @@
+"UnLitGeneric"
+{
+"$basetexture"		"gta4/corona"
+$basetexture "sprites/light_glow02"
+$additive 1
+$translucent 1
+$vertexcolor 1
+$vertexalpha 1
+$ignorez 0
+$additive 0
+$no_fullbright 1
+}

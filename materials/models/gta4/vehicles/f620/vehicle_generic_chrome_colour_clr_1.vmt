@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/f620/vehicle_generic_chrome_colour"
+"$bumpmap" "models/gta4/vehicles/f620/vehicle_generic_chrome_normal"
+
+"$envmap" "env_cubemap"
+"$halflambert" 1
+}

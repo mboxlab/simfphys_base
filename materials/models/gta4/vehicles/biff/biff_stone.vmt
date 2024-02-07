@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/biff/biff_stone"
+"$bumpmap" "models/gta4/vehicles/biff/biff_stone_normal"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.4 .4 .4]"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+}

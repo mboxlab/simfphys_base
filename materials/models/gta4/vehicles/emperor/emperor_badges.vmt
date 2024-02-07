@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/emperor/emperor_badges"
+"$bumpmap" "models/gta4/vehicles/emperor/emperor_badges_n"
+
+"$halflambert" 1
+"$translucent" 1
+}

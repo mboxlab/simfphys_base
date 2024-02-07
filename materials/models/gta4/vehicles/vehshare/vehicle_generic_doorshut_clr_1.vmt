@@ -1,0 +1,13 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/vehshare/vehicle_generic_doorshut"
+"$bumpmap" "models/gta4/vehicles/vehshare/vehicle_generic_doorshut_normal"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.4 .4 .4]"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+
+
+}

@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/slamvan/towtruck_detail"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/slamvan/towtruck_detail_spec"
+"$envmaptint" "[.75 .75 .75]"
+
+"$halflambert" 1
+}

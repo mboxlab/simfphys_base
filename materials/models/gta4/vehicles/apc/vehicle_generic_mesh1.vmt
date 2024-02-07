@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta4/vehicles/apc/vehicle_generic_mesh1"
+
+	"$translucent" 1
+}

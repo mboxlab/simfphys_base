@@ -1,0 +1,9 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/stainer/noose_lightbar"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.6 .6 .6]"
+
+"$halflambert" 1
+}

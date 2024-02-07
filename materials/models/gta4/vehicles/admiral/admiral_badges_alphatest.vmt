@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/admiral/admiral_badges"
+"$bumpmap" "models/gta4/vehicles/admiral/admiral_badges_normal"
+
+"$halflambert" 1
+"$alphatest" 1
+}

@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/f620/f620"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.2 .2 .2]"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+}

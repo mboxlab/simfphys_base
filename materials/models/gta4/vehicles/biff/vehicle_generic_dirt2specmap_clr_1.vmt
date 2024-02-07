@@ -1,0 +1,23 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/vehshare/vehicle_generic_smallspecmap"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/vehshare_truck/vehicle_genericmud_truck"
+"$envmaptint" "[.5 .5 .5]"
+
+"$detail" "models/gta4/vehicles/vehshare_truck/vehicle_genericmud_truck"
+"$detailscale" "1"
+"$detailblendfactor" "0.75"
+"$detailblendmode" "8"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+
+Proxies {
+    		ColorSlot1{
+			name "Primary Color"
+       			resultVar $color2
+           		}
+	}
+}

@@ -1,0 +1,17 @@
+vertexlitgeneric
+{
+$basetexture 	"models/drift_spirits/toyota/mk3/wheel"
+$bumpmap	"models/drift_spirits/other/flat_nm"
+$phong 1
+$nodecal 1
+
+"$colorfix" "{255 255 255}"
+	"Proxies"
+	{
+		"Equals"
+		{
+			srcVar1 $colorfix
+			resultVar	$color
+		}
+	}
+}

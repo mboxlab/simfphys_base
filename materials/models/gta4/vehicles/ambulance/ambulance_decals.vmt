@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/ambulance/ambulance_decals"
+
+"$translucent" 1
+"$halflambert" 1
+}

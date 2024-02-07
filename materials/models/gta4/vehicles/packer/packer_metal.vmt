@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/packer/packer_metal"
+"$bumpmap" "models/gta4/vehicles/packer/packer_metal_normal"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.4 .4 .4]"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+}

@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/habanero/habanero_interior"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+}

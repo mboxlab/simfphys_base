@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/df8/df8_90_lights_glass"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.2 .2 .2]"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+}

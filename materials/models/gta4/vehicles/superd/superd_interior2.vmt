@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/superd/superd_interior2"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+}

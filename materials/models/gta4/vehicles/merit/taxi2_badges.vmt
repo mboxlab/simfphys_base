@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/merit/taxi2_badges"
+"$bumpmap" "models/gta4/vehicles/merit/taxi2_badges_n"
+
+"$translucent" 1
+}

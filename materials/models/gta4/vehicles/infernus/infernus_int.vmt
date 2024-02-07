@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/infernus/infernus_int"
+"$bumpmap" "models/gta4/vehicles/infernus/infernus_int_normal"
+
+"$halflambert" 1
+"$blendtintbybasealpha" 1
+}

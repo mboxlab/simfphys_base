@@ -1,0 +1,18 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/vehshare/vehicle_generic_smallspecmap"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/vehshare_truck/vehicle_genericmud_truck"
+"$envmapsaturation" "[.5 .5 .5]"
+
+"$detail" "models/gta4/vehicles/vehshare/vehicle_generic_alloy_silver_spec"
+"$detailscale" "5"
+"$detailblendfactor" "0.1"
+"$detailblendmode" "1"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+
+}
+

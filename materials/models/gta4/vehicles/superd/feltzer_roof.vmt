@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/feltzer/feltzer_roof"
+"$bumpmap" "models/gta4/vehicles/feltzer/feltzer_roof_normal"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.2 .2 .2]"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+}

@@ -1,0 +1,15 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/ruiner/ruiner_badges"
+"$bumpmap" "models/gta4/vehicles/ruiner/ruiner_badges_normal"
+
+"$halflambert" 1
+"$alphatest" 1
+
+Proxies {
+    		ColorSlot2{
+			name "Secondary Color"
+       			resultVar $color2
+           		}
+	}
+}

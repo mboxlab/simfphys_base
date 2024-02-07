@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/merit/taxi2_livery"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/vehshare/vehicle_genericmud_car_env2"
+"$envmapsaturation" "[.5 .5 .5]"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+
+}

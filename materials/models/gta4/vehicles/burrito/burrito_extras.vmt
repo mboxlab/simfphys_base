@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/burrito/burrito_extras"
+"$bumpmap" "models/gta4/vehicles/burrito/burrito_extras_n"
+
+"$halflambert" 1
+}

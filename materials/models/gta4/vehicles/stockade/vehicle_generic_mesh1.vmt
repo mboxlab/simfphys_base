@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/stockade/vehicle_generic_mesh1"
+
+"$halflambert" 1
+"$translucent" 1
+}

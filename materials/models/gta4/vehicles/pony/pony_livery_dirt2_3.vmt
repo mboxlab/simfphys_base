@@ -1,0 +1,18 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/pony/pony_livery_3"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/pony/pony_dirtmap"
+"$envmapsaturation" "[.5 .5 .5]"
+
+"$detail" "models/gta4/vehicles/pony/pony_dirtmap"
+"$detailscale" "1"
+"$detailblendfactor" "0.75"
+"$detailblendmode" "8"
+
+"$blendtintbybasealpha" 1
+"$halflambert" 1
+
+
+}

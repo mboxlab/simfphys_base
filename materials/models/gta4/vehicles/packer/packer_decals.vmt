@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/packer/packer_decals"
+"$bumpmap" "models/gta4/vehicles/packer/packer_decals_normal"
+
+"$halflambert" 1
+"$translucent" 1
+}

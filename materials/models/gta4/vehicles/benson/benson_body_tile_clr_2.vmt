@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/benson/benson_body_tile"
+
+"$envmap" "env_cubemap"
+"$envmapmask" "models/gta4/vehicles/benson/ec_oiltank2_s"
+"$envmaptint" "[.4 .4 .4]"
+
+"$halflambert" 1
+
+}
+

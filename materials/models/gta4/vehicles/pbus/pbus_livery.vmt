@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/pbus/pbus_livery"
+
+"$halflambert" 1
+"$translucent" 1
+}

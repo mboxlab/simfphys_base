@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/gta4/vehicles/dukes/vehicle_generic_mesh_3a"
+	"$bumpmap" "models/gta4/vehicles/dukes/vehicle_generic_mesh3_normal"
+	"$translucent" 1
+	"$nocull" 1
+}

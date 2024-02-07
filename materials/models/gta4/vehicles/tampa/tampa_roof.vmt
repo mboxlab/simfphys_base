@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/tampa/tampa_roof"
+"$bumpmap" "models/gta4/vehicles/tampa/tampa_roof_normal"
+
+"$halflambert" 1
+
+$phong 1
+$phongexponent 3
+$phongboost 5
+$phongfresnelranges "[0 0.5 1]"
+}

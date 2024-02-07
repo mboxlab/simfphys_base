@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/gta4/vehicles/ambulance/ambulance_lights_glass"
+
+"$envmap" "env_cubemap"
+"$envmaptint" "[.6 .6 .6]"
+
+"$translucent" 1
+"$halflambert" 1
+}
